@@ -43,6 +43,14 @@ class WebpageMonitorServiceProvider extends ServiceProvider
         $this->registerEventListeners();
 
         if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/webpage-monitor.php' => config_path('webpage-monitor.php'),
+            ], 'webpage-monitor-config');
+
+            $this->publishes([
+                __DIR__.'/../database/migrations' => database_path('migrations'),
+            ], 'webpage-monitor-migrations');
+
             $this->commands([
                 CheckWebpageCommand::class,
                 CreateWebpageCommand::class,

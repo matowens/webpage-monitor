@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Notification;
-use Rivetworks\WebpageMonitor\Notifications\MonitorDisabledNotification;
 use Rivetworks\WebpageMonitor\Models\WebpageMonitor;
+use Rivetworks\WebpageMonitor\Notifications\MonitorDisabledNotification;
 
 it('disables an active monitor and sends one disabled notification', function () {
     config()->set('webpage-monitor.notifications.mail.recipients', ['ops@example.com']);

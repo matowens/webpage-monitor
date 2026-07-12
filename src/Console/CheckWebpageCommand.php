@@ -32,8 +32,7 @@ class CheckWebpageCommand extends Command
         FetchWebpage $fetchWebpage,
         ExactTextMatcher $exactTextMatcher,
         ExtractSelectedContent $extractSelectedContent,
-    ): int
-    {
+    ): int {
         $url = (string) $this->argument('url');
         $expectedText = $this->option('contains');
         $selector = $this->option('selector');
@@ -156,8 +155,7 @@ class CheckWebpageCommand extends Command
         ?string $expectedText = null,
         ?bool $textWasFound = null,
         ?SelectedContentResult $selectedContentResult = null,
-    ): void
-    {
+    ): void {
         $this->line('Requested URL: '.$result->requestedUrl);
         $this->line('Reachable: '.($result->reachable ? 'yes' : 'no'));
         $this->line('HTTP Status: '.($result->statusCode ?? 'n/a'));

@@ -2,8 +2,8 @@
 
 namespace Rivetworks\WebpageMonitor\Database\Factories;
 
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Carbon;
 use Rivetworks\WebpageMonitor\Enums\MonitorType;
 use Rivetworks\WebpageMonitor\Models\WebpageMonitor;
 

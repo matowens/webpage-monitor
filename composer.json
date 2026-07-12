@@ -1,15 +1,28 @@
 {
-    "name": "rivetworks/webpage-monitor",
-    "description": "Webpage Monitor package for Rivetworks.",
+    "name": "matowens/webpage-monitor",
+    "description": "Laravel package for saved webpage monitors, scheduled checks, change detection, and state-aware mail notifications.",
     "type": "library",
-    "version": "0.1.0",
-    "license": "proprietary",
+    "license": "MIT",
     "require": {
+        "ext-dom": "*",
         "php": "^8.3",
         "illuminate/console": "^13.0",
         "illuminate/database": "^13.0",
+        "illuminate/events": "^13.0",
+        "illuminate/http": "^13.0",
+        "illuminate/notifications": "^13.0",
+        "illuminate/queue": "^13.0",
         "illuminate/support": "^13.0",
         "symfony/css-selector": "^8.1"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "laravel/pint": "^1.27",
+        "mockery/mockery": "^1.6",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.7",
+        "pestphp/pest-plugin-laravel": "^4.1",
+        "phpunit/phpunit": "^12.0"
     },
     "autoload": {
         "psr-4": {
@@ -17,11 +30,27 @@
             "Rivetworks\\WebpageMonitor\\Database\\Factories\\": "database/factories/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Rivetworks\\WebpageMonitor\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "format": "vendor/bin/pint",
+        "format:test": "vendor/bin/pint --test"
+    },
     "extra": {
         "laravel": {
             "providers": [
                 "Rivetworks\\WebpageMonitor\\WebpageMonitorServiceProvider"
             ]
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     },
     "minimum-stability": "stable",

@@ -180,7 +180,7 @@ it('releases the claim when dispatch throws and continues later monitors', funct
         public function dispatch($command)
         {
             if ($command->monitorId === $this->failingMonitorId) {
-                throw new \RuntimeException('sensitive dispatch details');
+                throw new RuntimeException('sensitive dispatch details');
             }
 
             $this->dispatchedMonitorIds[] = $command->monitorId;

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
 use Rivetworks\WebpageMonitor\Enums\ChangeState;
 use Rivetworks\WebpageMonitor\Enums\MonitorType;
@@ -25,9 +26,9 @@ it('supports scheduling and claim fields on monitors', function () {
     )->claimed(now()->subMinute(), 'claim-token')->create();
 
     expect($monitor->interval_minutes)->toBe(30)
-        ->and($monitor->next_run_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
+        ->and($monitor->next_run_at)->toBeInstanceOf(Carbon::class)
         ->and($monitor->last_run_at)->toBeNull()
-        ->and($monitor->claimed_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class)
+        ->and($monitor->claimed_at)->toBeInstanceOf(Carbon::class)
         ->and($monitor->claim_token)->toBe('claim-token');
 });
 

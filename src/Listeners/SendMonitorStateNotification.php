@@ -2,9 +2,9 @@
 
 namespace Rivetworks\WebpageMonitor\Listeners;
 
-use Illuminate\Support\Str;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Facades\Notification;
-use Rivetworks\WebpageMonitor\Actions\ResolveNotificationRecipients;
+use Illuminate\Support\Str;
 use Rivetworks\WebpageMonitor\Events\MonitorAssertionFailed;
 use Rivetworks\WebpageMonitor\Events\MonitorAssertionRecovered;
 use Rivetworks\WebpageMonitor\Events\MonitorBaselineEstablished;
@@ -27,8 +27,6 @@ use Throwable;
  */
 class SendMonitorStateNotification
 {
-    public function __construct(public ResolveNotificationRecipients $resolveNotificationRecipients) {}
-
     /**
      * Determine whether a notification is enabled, then queue one notification per configured recipient.
      */
@@ -46,7 +44,7 @@ class SendMonitorStateNotification
             return;
         }
 
-        foreach ($this->resolveNotificationRecipients->execute() as $recipient) {
+        foreach ($this->notificationRecipients() as $recipient) {
             try {
                 Notification::send($recipient, $notification);
             } catch (Throwable $exception) {
@@ -58,44 +56,36 @@ class SendMonitorStateNotification
     /**
      * Resolve the queued notification instance for the current event when its category is enabled.
      */
-    private function resolveNotification(object $event): object|null
+    private function resolveNotification(object $event): ?object
     {
         return match (true) {
-            $event instanceof MonitorBaselineEstablished && config('webpage-monitor.notifications.baseline_enabled', true)
-                => new MonitorBaselineEstablishedNotification($event->state, $this->maxContentLength()),
+            $event instanceof MonitorBaselineEstablished && config('webpage-monitor.notifications.baseline_enabled', true) => new MonitorBaselineEstablishedNotification($event->state, $this->maxContentLength()),
 
-            $event instanceof MonitorBecameUnavailable
-                => new MonitorBecameUnavailableNotification($event->state),
+            $event instanceof MonitorBecameUnavailable => new MonitorBecameUnavailableNotification($event->state),
 
-            $event instanceof MonitorRecovered && config('webpage-monitor.notifications.recovery_enabled', true)
-                => new MonitorRecoveredNotification($event->state),
+            $event instanceof MonitorRecovered && config('webpage-monitor.notifications.recovery_enabled', true) => new MonitorRecoveredNotification($event->state),
 
-            $event instanceof MonitorAssertionFailed
-                => new MonitorAssertionFailedNotification($event->state),
+            $event instanceof MonitorAssertionFailed => new MonitorAssertionFailedNotification($event->state),
 
-            $event instanceof MonitorAssertionRecovered && config('webpage-monitor.notifications.recovery_enabled', true)
-                => new MonitorRecoveredNotification($event->state, 'contains'),
+            $event instanceof MonitorAssertionRecovered && config('webpage-monitor.notifications.recovery_enabled', true) => new MonitorRecoveredNotification($event->state, 'contains'),
 
-            $event instanceof MonitorContentChanged
-                => new MonitorContentChangedNotification(
-                    state: $event->state,
-                    previousSelectedContent: Str::limit($event->previousSelectedContent, $this->maxContentLength(), preserveWords: false),
-                    currentSelectedContent: Str::limit($event->state->selectedContent ?? '', $this->maxContentLength(), preserveWords: false),
-                    previousContentHash: $event->previousContentHash,
-                    currentContentHash: $event->state->contentHash ?? '',
-                ),
+            $event instanceof MonitorContentChanged => new MonitorContentChangedNotification(
+                state: $event->state,
+                previousSelectedContent: Str::limit($event->previousSelectedContent, $this->maxContentLength(), preserveWords: false),
+                currentSelectedContent: Str::limit($event->state->selectedContent ?? '', $this->maxContentLength(), preserveWords: false),
+                previousContentHash: $event->previousContentHash,
+                currentContentHash: $event->state->contentHash ?? '',
+            ),
 
-            $event instanceof MonitorDisabled && config('webpage-monitor.notifications.lifecycle_enabled', true)
-                => new MonitorDisabledNotification(
-                    monitorId: $event->monitor->id,
-                    monitorName: $event->monitor->name,
-                    monitorUrl: $event->monitor->url,
-                    monitorType: $event->monitor->type->value,
-                    disabledAt: $event->disabledAt,
-                ),
+            $event instanceof MonitorDisabled && config('webpage-monitor.notifications.lifecycle_enabled', true) => new MonitorDisabledNotification(
+                monitorId: $event->monitor->id,
+                monitorName: $event->monitor->name,
+                monitorUrl: $event->monitor->url,
+                monitorType: $event->monitor->type->value,
+                disabledAt: $event->disabledAt,
+            ),
 
-            $event instanceof MonitorDeleted && config('webpage-monitor.notifications.lifecycle_enabled', true)
-                => new MonitorDeletedNotification($event->monitor),
+            $event instanceof MonitorDeleted && config('webpage-monitor.notifications.lifecycle_enabled', true) => new MonitorDeletedNotification($event->monitor),
 
             default => null,
         };
@@ -107,5 +97,18 @@ class SendMonitorStateNotification
     private function maxContentLength(): int
     {
         return (int) config('webpage-monitor.notifications.max_content_length', 200);
+    }
+
+    /**
+     * Build anonymous mail notifiables directly from the configured package recipient list.
+     *
+     * @return list<AnonymousNotifiable>
+     */
+    private function notificationRecipients(): array
+    {
+        return array_map(
+            static fn (string $recipient): AnonymousNotifiable => Notification::route('mail', $recipient),
+            config('webpage-monitor.notifications.mail.recipients', []),
+        );
     }
 }

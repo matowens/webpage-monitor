@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use Rivetworks\WebpageMonitor\Actions\RunWebpageMonitor;
-use Rivetworks\WebpageMonitor\Data\FetchResult;
 use Rivetworks\WebpageMonitor\Data\MonitorRunResult;
 use Rivetworks\WebpageMonitor\Enums\ChangeState;
 use Rivetworks\WebpageMonitor\Events\MonitorBaselineEstablished;
@@ -167,13 +166,13 @@ it('keeps the claim during retryable unexpected exceptions and does not advance 
 
         public function execute(WebpageMonitor $monitor): MonitorRunResult
         {
-            throw new \RuntimeException('unexpected execution failure');
+            throw new RuntimeException('unexpected execution failure');
         }
     });
 
     $job = new RunScheduledWebpageMonitor($monitor->id, 'claim-token');
 
-    expect(fn () => app()->call([$job, 'handle']))->toThrow(\RuntimeException::class);
+    expect(fn () => app()->call([$job, 'handle']))->toThrow(RuntimeException::class);
 
     $monitor->refresh();
 
@@ -193,7 +192,7 @@ it('releases the claim after permanent failure and leaves the schedule overdue f
 
     $job = new RunScheduledWebpageMonitor($monitor->id, 'claim-token');
 
-    $job->failed(new \RuntimeException('permanent queue failure'));
+    $job->failed(new RuntimeException('permanent queue failure'));
 
     $monitor->refresh();
 
@@ -214,7 +213,7 @@ it('allows an overdue monitor to be redispatched after permanent failure release
     )->claimed(Carbon::now()->subSeconds(30), 'claim-token')->create();
 
     $job = new RunScheduledWebpageMonitor($monitor->id, 'claim-token');
-    $job->failed(new \RuntimeException('permanent queue failure'));
+    $job->failed(new RuntimeException('permanent queue failure'));
 
     $this->artisan('webpage-monitor:run-due')->assertExitCode(0);
 

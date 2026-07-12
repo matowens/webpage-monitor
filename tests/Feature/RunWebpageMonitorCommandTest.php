@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Notification;
 use Rivetworks\WebpageMonitor\Enums\ChangeState;
 use Rivetworks\WebpageMonitor\Models\WebpageMonitor;
 use Rivetworks\WebpageMonitor\Models\WebpageMonitorCheck;
