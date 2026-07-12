@@ -1,0 +1,29 @@
+{
+    "name": "rivetworks/webpage-monitor",
+    "description": "Webpage Monitor package for Rivetworks.",
+    "type": "library",
+    "version": "0.1.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "illuminate/console": "^13.0",
+        "illuminate/database": "^13.0",
+        "illuminate/support": "^13.0",
+        "symfony/css-selector": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rivetworks\\WebpageMonitor\\": "src/",
+            "Rivetworks\\WebpageMonitor\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Rivetworks\\WebpageMonitor\\WebpageMonitorServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
