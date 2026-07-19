@@ -2,6 +2,12 @@
 
 All notable changes to `matowens/webpage-monitor` will be documented in this file.
 
+## [1.0.1] - 2026-07-18
+
+- PHP 8.3 dependency resolution compatibility for the package release
+- Updated selector tests to use PHP 8.3-compatible syntax
+- Removed the duplicate orphan PHPDoc block from `RunScheduledWebpageMonitor` with no behavior change
+
 ## [1.0.0] - 2026-07-12
 
 Initial public release.

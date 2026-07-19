@@ -49,9 +49,6 @@ class RunScheduledWebpageMonitor implements ShouldQueue
     }
 
     /**
-     * Count only uncaught execution exceptions against the meaningful failure budget.
-     */
-    /**
      * Back off conservatively between unexpected exception retries.
      *
      * @return list<int>
